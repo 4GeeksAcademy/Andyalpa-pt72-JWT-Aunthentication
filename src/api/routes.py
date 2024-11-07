@@ -35,13 +35,13 @@ def login():
         access_token = create_access_token(identity = user.id)
         return jsonify(access_token = access_token, user = user)
     else:
-        return jsonify('User does not exist')
+        return jsonify('User does not exist'), 200
     
 @api.route('/profile', methods=['GET'])
 @jwt_required
 def get_user():
     user_id = get_jwt_identity()
     user = User.query.filter_by(id = user_id).first()
-    return jsonify(email = user.email, name = user.name)
+    return jsonify(email = user.email, name = user.name), 200
     
 
