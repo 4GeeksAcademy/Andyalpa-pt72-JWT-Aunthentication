@@ -1,35 +1,31 @@
-// import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { Context } from '../store/appContext';
+import { Navigate, useNavigate } from 'react-router-dom';
 
-// const Signup = () => {
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
+const Signup = () => {
+  const { store, actions } = useContext(Context);  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate()
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const response = await fetch('/signup', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({  email, password }),
-//     });
-//     const data = await response.json();
-//     console.log(data);
-//   };
+  const handleSubmit = async () => {
+     actions.signUp(email, password)
+     navigate('/')
+  };
 
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <label>
-//         Email:
-//         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-//       </label>
-//       <label>
-//         Password:
-//         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-//       </label>
-//       <button type="submit">Sign Up</button>
-//     </form>
-//   );
-// };
+  return (
+    <div className="text-center mt-5">
+        <div class="form-floating mb-3">
+        <input type="email" onChange={(e) => setEmail(e.target.value)} class="form-control" id="floatingInput" placeholder="name@example.com"/>
+        <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating">
+        <input type="password" onChange={(e) => setPassword(e.target.value)} class="form-control" id="floatingPassword" placeholder="Password"/>
+        <label for="floatingPassword">Password</label>
+        </div>
+        <button onClick={() => handleSubmit()} className='btn btn-danger'>Sign Up</button>
+    </div>
+  );
+};
 
-// export default Signup;
+export default Signup;

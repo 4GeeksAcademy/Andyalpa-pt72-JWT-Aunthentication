@@ -13,35 +13,44 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api)
 
+@api.route('/hello', methods=['POST', 'GET'])
+def handle_hello():
+
+    response_body = {
+        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
+    }
+
+    return jsonify(response_body), 200
 
 @api.route('/signup', methods=['POST'])
-def sign_up():
+def create_user():
     body = request.get_json()
     user_email = body['email']
-    user_password = hashlib.sha256(body['password']).encode("utf-8")
-    new_user = User(email = user_email, password = user_password)
-    db.session.add(new_user)
+    user_password =  hashlib.sha256(body['password'].encode("utf-8")).hexdigest()
+    user = User(email = user_email, password = user_password)
+    db.session.add(user)
     db.session.commit()
 
-    return jsonify('New user created'), 200
+    return jsonify("User successfully created"), 200
 
 @api.route('/login', methods=['POST'])
 def login():
     body = request.get_json()
     user_email = body['email']
-    user_password = hashlib.sha256(body['password']).encode("utf-8")
-    user = User.query.filter_by(email = user_email, password = user_password)
+    user_password = hashlib.sha256(body['password'].encode("utf-8")).hexdigest()
+    user = User.query.filter_by(email = user_email, password = user_password).first()
     if user and user.password == user_password:
         access_token = create_access_token(identity = user.id)
-        return jsonify(access_token = access_token, user = user)
+        return jsonify(access_token = access_token, user = user.serialize())
     else:
-        return jsonify('User does not exist'), 200
+        return jsonify("user does not exist")
+
     
 @api.route('/profile', methods=['GET'])
-@jwt_required
+@jwt_required()
 def get_user():
     user_id = get_jwt_identity()
     user = User.query.filter_by(id = user_id).first()
-    return jsonify(email = user.email, name = user.name), 200
+    return jsonify(user.serialize()), 200
     
 

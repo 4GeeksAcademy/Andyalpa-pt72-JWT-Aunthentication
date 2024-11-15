@@ -13,21 +13,49 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			token: sessionStorage.getItem("token")
 		},
 		actions: {
-			getUser: () => {
-				const token = sessionStorage.getItem("token");
-				fetch('/user', {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
+			login: async (email, password) => {
+				let response = await fetch(process.env.BACKEND_URL + "/login", {
+					method: "POST",
+					headers: { "Content-type": "application/json" },
+					body: JSON.stringify({ 
+						email: email,
+						password: password
+					})
 				})
-				.then(response => response.json())
-				.then(data => {
-
-				});
+				let data = await response.json()
+				sessionStorage.setItem("token", data.access_token);
+				console.log(sessionStorage.getItem("token"))
 			},
+
+			signUp: async (email, password) => {
+				let response = await fetch(process.env.BACKEND_URL + "/signup", {
+					method: 'POST',
+					headers: {
+					  'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ 
+					   email: email, 
+					   password: password 
+					  }),
+				  });
+				  let data = await response.json();
+				  console.log(data);
+				
+			},
+
+			logout: () => {
+				 sessionStorage.removeItem("token"); 
+				 setStore({ token: null }); 
+			},
+
+
+
+
+			
 
 
 

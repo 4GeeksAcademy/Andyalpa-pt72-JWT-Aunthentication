@@ -1,38 +1,32 @@
-// import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { Context } from '../store/appContext';
+import { Navigate, useNavigate } from 'react-router-dom';
 
-// const Login = () => {
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
+const Login = () => {
+  const { store, actions } = useContext(Context);  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate()
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const response = await fetch('/login', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ email, password }),
-//     });
-//     const data = await response.json();
-//     if (data.access_token) {
-//       sessionStorage.setItem('token', data.access_token);
-//     }
-//     console.log(data);
-//   };
+  const handleLogin = async() => {
+     actions.login(email, password)
+     console.log(sessionStorage.getItem("token"))
+     navigate('/profile')
+  };
 
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <label>
-//         Email:
-//         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-//       </label>
-//       <label>
-//         Password:
-//         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-//       </label>
-//       <button type="submit">Login</button>
-//     </form>
-//   );
-// };
+  return (
+    <div className="text-center mt-5">
+        <div class="form-floating mb-3">
+        <input type="email" onChange={(e) => setEmail(e.target.value)} class="form-control" id="floatingInput" placeholder="name@example.com"/>
+        <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating">
+        <input type="password" onChange={(e) => setPassword(e.target.value)} class="form-control" id="floatingPassword" placeholder="Password"/>
+        <label for="floatingPassword">Password</label>
+        </div>
+        <button onClick={() => handleLogin()} className='btn btn-danger'>Login</button>
+    </div>
+  );
+};
 
-// export default Login;
+export default Login;
